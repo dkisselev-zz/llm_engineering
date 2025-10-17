@@ -27,11 +27,17 @@ def fetch_website_contents(url):
 
 def fetch_website_links(url):
     """
-    Return the links on the webiste at the given url
+    Return the links on the website at the given url with their anchor text
     I realize this is inefficient as we're parsing twice! This is to keep the code in the lab simple.
     Feel free to use a class and optimize it!
     """
     response = requests.get(url, headers=headers)
     soup = BeautifulSoup(response.content, "html.parser")
-    links = [link.get("href") for link in soup.find_all("a")]
-    return [link for link in links if link]
+    links = []
+    for link in soup.find_all("a"):
+        href = link.get("href")
+        if href:
+            text = link.get_text(strip=True)
+            links.append({"url": href, "text": text if text else "(no text)"})
+
+    return links
